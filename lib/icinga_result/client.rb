@@ -9,7 +9,7 @@ require 'icinga_result/check_result'
 module IcingaResult
   # The Icinga2 API client
   class Client
-    CONFIG_FILE = "#{ENV['HOME']}/.icinga_api.yml".freeze
+    CONFIG_FILE = "#{ENV['HOME']}/.icinga_result.config.yml".freeze
 
     attr_reader :username, :password, :host, :port
 
