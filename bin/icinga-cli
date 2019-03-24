@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require_relative 'icinga'
+
+@options = {
+  service: '',
+  interval: 3600,
+  description: '',
+  status: 0,
+  message: '',
+  performance_data: '',
+  host_alive: false
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{ARGV[0]} [options]"
+
+  opts.on('--service [NAME]', 'Service name') do |name|
+    @options[:service] = name
+  end
+  opts.on('--interval [INTERVAL]', 'Server check interval') do |interval|
+    @options[:interval] = interval
+  end
+  opts.on('--description [DESCRIPTION]', 'Service description') do |description|
+    @options[:description] = description
+  end
+  opts.on('--status [STATUS]', 'Status code for the check') do |status|
+    @options[:status] = status
+  end
+  opts.on('--message [MESSAGE]', 'Status message for the check') do |message|
+    @options[:message] = message
+  end
+  opts.on('--performance-data [DATA]', 'Performance data for the check') do |data|
+    @options[:performance_data] = data
+  end
+  opts.on('--host-alive', 'Send host alive signal') do
+    @options[:host_alive] = true
+  end
+end.parse!
+
+client = Icinga.new
+
+client.send_host_alive if @options[:host_alive]
+
+unless @options[:service].empty?
+  service = Service.new(@options[:service], interval: @options[:interval], description: @options[:description])
+  result = CheckResult.new(@options[:status], @status[:description])
+  client.send(service, result)
+end
