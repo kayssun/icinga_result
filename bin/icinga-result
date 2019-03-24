@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require_relative 'icinga'
+require 'icinga_result/client'
 
 @options = {
   service: '',
@@ -39,12 +39,12 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-client = Icinga.new
+client = IcingaResult::Client.new
 
 client.send_host_alive if @options[:host_alive]
 
 unless @options[:service].empty?
-  service = Service.new(@options[:service], interval: @options[:interval], description: @options[:description])
-  result = CheckResult.new(@options[:status], @status[:description])
+  service = IcingaResult::Service.new(@options[:service], interval: @options[:interval], description: @options[:description])
+  result = IcingaResult::CheckResult.new(@options[:status], @status[:description])
   client.send(service, result)
 end
