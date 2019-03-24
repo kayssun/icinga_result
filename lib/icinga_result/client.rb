@@ -36,7 +36,7 @@ module IcingaResult
     def send_result(host, service, check_result)
       response = api_post("/actions/process-check-result?service=#{host.name}!#{service.name}", check_result.data)
       register_service(host, service) if response.code.to_i == 404
-      send_host_alive(host)
+      send_host_alive(host) if @always_send
 
       handle_errors(response)
     end
