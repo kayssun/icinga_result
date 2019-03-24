@@ -64,23 +64,17 @@ module IcingaResult
     end
 
     def handle_errors(response)
-      if response.code.to_i < 200 || response.code.to_i > 299
-        raise "Cannot send results to Icinga server: #{response.code} - #{response.message}: #{response.body}"
-      end
-    end
+      return if response.code.to_i >= 200 && response.code.to_i < 299
 
-    def header
-      {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+      raise "Cannot send results to Icinga server: #{response.code} - #{response.message}: #{response.body}"
     end
 
     def api_post(path, data)
       http = Net::HTTP.new(@host, @port)
       http.use_ssl = true
-      request = Net::HTTP::Post.new("/v1#{path}", header)
+      request = Net::HTTP::Post.new("/v1#{path}", {})
       request.basic_auth @username, @password
+      request['Accept'] = 'application/json'
       request.body = data.to_json
       puts "Sending POST '#{request.body}' to /v1#{path}"
       http.request(request)
@@ -89,7 +83,8 @@ module IcingaResult
     def api_put(path, data)
       http = Net::HTTP.new(@host, @port)
       http.use_ssl = true
-      request = Net::HTTP::Put.new("/v1#{path}", header)
+      request = Net::HTTP::Put.new("/v1#{path}", {})
+      request['Accept'] = 'application/json'
       request.basic_auth @username, @password
       request.body = data.to_json
       puts "Sending PUT '#{request.body}' to /v1#{path}"
