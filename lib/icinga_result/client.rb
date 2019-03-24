@@ -45,7 +45,8 @@ module IcingaResult
       path = "/actions/process-check-result?host=#{host.name}"
       data = { 'exit_status' => 0, 'plugin_output' => 'Host alive' }
       response = api_post(path, data)
-      puts 'Host not found' if response.code.to_i == 404
+      register_host(host) if response.code.to_i == 404
+      handle_errors(response)
       response
     end
 
