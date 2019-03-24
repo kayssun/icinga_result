@@ -22,6 +22,7 @@ module IcingaResult
         'templates': ['generic-host'],
         'attrs': {
           'check_command': 'passive',
+          'check_interval': 180,
           'enable_active_checks': true,
           'vars.description' => description
         }
